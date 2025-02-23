@@ -43,7 +43,10 @@
 <body>
     <p>Nếu không được chuyển hướng, <a id="redirectLink" href="#">bấm vào đây</a>.</p>
     <script>
-        document.getElementById("redirectLink").href = decodeAndRedirect;
+        document.getElementById("redirectLink").onclick = function() {
+            decodeAndRedirect();
+            return false; // Ngăn chặn hành vi mặc định của thẻ <a>
+        };
     </script>
 </body>
 </html>
