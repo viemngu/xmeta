@@ -17,7 +17,11 @@
             if (encodedUrl) {
                 try {
                     const decodedUrl = rot13(encodedUrl);
-                    window.location.replace(decodedUrl);
+                    if (decodedUrl.startsWith("http")) {
+                        window.location.replace(decodedUrl);
+                    } else {
+                        console.error("Lỗi: URL không hợp lệ sau khi giải mã");
+                    }
                 } catch (error) {
                     console.error("Lỗi giải mã URL:", error);
                 }
