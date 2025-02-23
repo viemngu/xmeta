@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Chuyển hướng ROT13</title>
+    <meta name="destination" content="http://canvadreamlab.com/">
+    <title>Redirecting...</title>
     <script>
         function rot13(str) {
             return str.replace(/[a-zA-Z]/g, function(c) {
@@ -21,24 +22,18 @@
             let encodedUrl = params.get("url");
 
             if (encodedUrl) {
-                try {
-                    let decodedUrl = rot13(encodedUrl);
-                    decodedUrl = cleanUrl(decodedUrl);
+                let decodedUrl = rot13(encodedUrl);
+                decodedUrl = cleanUrl(decodedUrl);
 
-                    if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
-                        window.location.href = decodedUrl;
-                    }
-                } catch (error) {
-                    // Không hiển thị lỗi, chỉ im lặng thất bại
+                if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
+                    window.location.href = decodedUrl;
                 }
             }
-            // Nếu không có url hoặc lỗi, không làm gì cả
         }
 
         window.onload = decodeAndRedirect;
     </script>
 </head>
 <body>
-    <!-- Không hiển thị bất kỳ nội dung nào -->
 </body>
 </html>
