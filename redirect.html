@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0;url=about:blank">
     <script>
         function decodeAndRedirect() {
             const params = new URLSearchParams(window.location.search);
@@ -12,17 +11,15 @@
             if (encodedUrl) {
                 try {
                     const decodedUrl = atob(encodedUrl);
-                    window.location.href = decodedUrl;
+                    window.location.replace(decodedUrl);
                 } catch (error) {
                     console.error("Lỗi giải mã URL:", error);
                 }
-            } else {
-                document.body.innerHTML = "<h1>Không tìm thấy URL hợp lệ!</h1>";
             }
         }
+        decodeAndRedirect();
     </script>
 </head>
-<body onload="decodeAndRedirect()">
-    <h2>Đang chuyển hướng...</h2>
+<body>
 </body>
 </html>
