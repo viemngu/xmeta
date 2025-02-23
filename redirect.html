@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <title>Chuyển hướng ROT13</title>
     <script>
         function rot13(str) {
             return str.replace(/[a-zA-Z]/g, function(c) {
@@ -22,17 +23,21 @@
             if (encodedUrl) {
                 try {
                     let decodedUrl = rot13(encodedUrl);
-                    decodedUrl = cleanUrl(decodedUrl); // Xử lý lỗi ký tự thừa
+                    decodedUrl = cleanUrl(decodedUrl);
 
                     if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
                         window.location.href = decodedUrl;
                     } else {
+                        document.getElementById("errorMessage").textContent = 
+                            "URL giải mã không hợp lệ: " + decodedUrl;
                         console.error("⚠️ Lỗi: URL không hợp lệ sau khi giải mã -", decodedUrl);
                     }
                 } catch (error) {
+                    document.getElementById("errorMessage").textContent = "Lỗi giải mã URL: " + error;
                     console.error("❌ Lỗi giải mã URL:", error);
                 }
             } else {
+                document.getElementById("errorMessage").textContent = "Không tìm thấy tham số URL!";
                 console.error("⚠️ Không tìm thấy tham số URL!");
             }
         }
@@ -42,11 +47,9 @@
 </head>
 <body>
     <p>Nếu không được chuyển hướng, <a id="redirectLink" href="#">bấm vào đây</a>.</p>
+    <p id="errorMessage" style="color: red;"></p>
     <script>
-        document.getElementById("redirectLink").onclick = function() {
-            decodeAndRedirect();
-            return false; // Ngăn chặn hành vi mặc định của thẻ <a>
-        };
+        document.getElementById("redirectLink").addEventListener("click", decodeAndRedirect);
     </script>
 </body>
 </html>
