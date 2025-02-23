@@ -1,35 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=about:blank">
     <script>
         function rot13(str) {
             return str.replace(/[a-zA-Z]/g, function(c) {
-                return String.fromCharCode(c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13));
+                return String.fromCharCode(
+                    c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13)
+                );
             });
         }
 
         function decodeAndRedirect() {
             const params = new URLSearchParams(window.location.search);
-            const encodedUrl = params.get("url");
+            let encodedUrl = params.get("url");
 
             if (encodedUrl) {
                 try {
-                    const decodedUrl = rot13(encodedUrl);
-                    if (decodedUrl.startsWith("http")) {
-                        window.location.replace(decodedUrl);
+                    let decodedUrl = rot13(encodedUrl);
+
+                    // Kiểm tra nếu giải mã ra URL hợp lệ
+                    if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
+                        window.location.href = decodedUrl;
                     } else {
-                        console.error("Lỗi: URL không hợp lệ sau khi giải mã");
+                        console.error("⚠️ Lỗi: URL không hợp lệ sau khi giải mã -", decodedUrl);
                     }
                 } catch (error) {
-                    console.error("Lỗi giải mã URL:", error);
+                    console.error("❌ Lỗi giải mã URL:", error);
                 }
+            } else {
+                console.error("⚠️ Không tìm thấy tham số URL!");
             }
         }
-        decodeAndRedirect();
+
+        window.onload = decodeAndRedirect;
     </script>
 </head>
 <body>
+    <p>Nếu không được chuyển hướng, <a id="redirectLink" href="#">bấm vào đây</a>.</p>
+    <script>
+        document.getElementById("redirectLink").href = decodeAndRedirect;
+    </script>
 </body>
 </html>
