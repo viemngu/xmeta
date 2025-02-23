@@ -11,6 +11,10 @@
             });
         }
 
+        function cleanUrl(url) {
+            return url.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9:/.]/g, '');
+        }
+
         function decodeAndRedirect() {
             const params = new URLSearchParams(window.location.search);
             let encodedUrl = params.get("url");
@@ -18,8 +22,8 @@
             if (encodedUrl) {
                 try {
                     let decodedUrl = rot13(encodedUrl);
+                    decodedUrl = cleanUrl(decodedUrl); // Xử lý lỗi ký tự thừa
 
-                    // Kiểm tra nếu giải mã ra URL hợp lệ
                     if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
                         window.location.href = decodedUrl;
                     } else {
