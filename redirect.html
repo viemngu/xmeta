@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="0;url=about:blank">
     <script>
-        function hexToString(hex) {
-            let str = "";
-            for (let i = 0; i < hex.length; i += 2) {
-                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-            }
-            return str;
+        function rot13(str) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                return String.fromCharCode(c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13));
+            });
         }
 
         function decodeAndRedirect() {
@@ -18,8 +16,7 @@
 
             if (encodedUrl) {
                 try {
-                    const decodedUrl = hexToString(encodedUrl);
-                    console.log("Chuyển hướng đến:", decodedUrl);
+                    const decodedUrl = rot13(encodedUrl);
                     window.location.replace(decodedUrl);
                 } catch (error) {
                     console.error("Lỗi giải mã URL:", error);
