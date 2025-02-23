@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="0;url=about:blank">
     <script>
+        function hexToString(hex) {
+            let str = "";
+            for (let i = 0; i < hex.length; i += 2) {
+                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+            }
+            return str;
+        }
+
         function decodeAndRedirect() {
             const params = new URLSearchParams(window.location.search);
             const encodedUrl = params.get("url");
 
             if (encodedUrl) {
                 try {
-                    const decodedUrl = atob(encodedUrl);
+                    const decodedUrl = hexToString(encodedUrl);
                     window.location.replace(decodedUrl);
                 } catch (error) {
                     console.error("Lỗi giải mã URL:", error);
