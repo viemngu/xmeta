@@ -19,6 +19,7 @@
             if (encodedUrl) {
                 try {
                     const decodedUrl = hexToString(encodedUrl);
+                    console.log("Chuyển hướng đến:", decodedUrl);
                     window.location.replace(decodedUrl);
                 } catch (error) {
                     console.error("Lỗi giải mã URL:", error);
