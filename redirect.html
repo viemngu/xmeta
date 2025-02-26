@@ -1,15 +1,20 @@
-<?php
-// Lấy tham số 'd' từ URL
-$encodedUrl = $_GET['d'] ?? '';
-if (!empty($encodedUrl)) {
-  // Giải mã Base64 kép
-  $decoded = base64_decode(base64_decode($encodedUrl));
-  if ($decoded) {
-    header("Location: " . $decoded, true, 302);
-    exit();
-  }
-}
-header("HTTP/1.1 400 Bad Request");
-echo "Invalid request: Missing or invalid 'd' parameter.";
-exit();
-?>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+    // Lấy tham số 'd' từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const encodedUrl = urlParams.get('d');
+    if (encodedUrl) {
+      // Giải mã Base64 kép
+      const decoded = atob(atob(encodedUrl));
+      window.location.href = decoded;
+    } else {
+      document.write("Invalid request: Missing 'd' parameter.");
+    }
+  </script>
+</body>
+</html>
