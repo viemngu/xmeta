@@ -1,20 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <title>Redirecting...</title>
+    <meta charset="UTF-8">
+    <title>Chuyển hướng ROT13</title>
+    <script>
+        function rot13(str) {
+            return str.replace(/[a-zA-Z]/g, function(c) {
+                return String.fromCharCode(
+                    c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13)
+                );
+            });
+        }
+
+        function cleanUrl(url) {
+            return url.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9:/.]/g, '');
+        }
+
+        function decodeAndRedirect() {
+            const params = new URLSearchParams(window.location.search);
+            let encodedUrl = params.get("url");
+
+            if (encodedUrl) {
+                try {
+                    let decodedUrl = rot13(encodedUrl);
+                    decodedUrl = cleanUrl(decodedUrl);
+
+                    if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
+                        window.location.href = decodedUrl;
+                    } else {
+                        document.getElementById("errorMessage").textContent = 
+                            "URL giải mã không hợp lệ: " + decodedUrl;
+                        console.error("⚠️ Lỗi: URL không hợp lệ sau khi giải mã -", decodedUrl);
+                    }
+                } catch (error) {
+                    document.getElementById("errorMessage").textContent = "Lỗi giải mã URL: " + error;
+                    console.error("❌ Lỗi giải mã URL:", error);
+                }
+            } else {
+                document.getElementById("errorMessage").textContent = "Không tìm thấy tham số URL!";
+                console.error("⚠️ Không tìm thấy tham số URL!");
+            }
+        }
+
+        window.onload = decodeAndRedirect;
+    </script>
 </head>
 <body>
-  <script>
-    // Lấy tham số 'd' từ URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const encodedUrl = urlParams.get('d');
-    if (encodedUrl) {
-      // Giải mã Base64 kép
-      const decoded = atob(atob(encodedUrl));
-      window.location.href = decoded;
-    } else {
-      document.write("Invalid request: Missing 'd' parameter.");
-    }
-  </script>
+    <p>Nếu không được chuyển hướng, <a id="redirectLink" href="#">bấm vào đây</a>.</p>
+    <p id="errorMessage" style="color: red;"></p>
+    <script>
+        document.getElementById("redirectLink").addEventListener("click", decodeAndRedirect);
+    </script>
 </body>
 </html>
