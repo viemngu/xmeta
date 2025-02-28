@@ -1,55 +1,58 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chuyển hướng ROT13</title>
+    <title>Redirecting...</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
     <script>
-        function rot13(str) {
-            return str.replace(/[a-zA-Z]/g, function(c) {
-                return String.fromCharCode(
-                    c.charCodeAt(0) + (c.toLowerCase() < 'n' ? 13 : -13)
-                );
-            });
-        }
-
-        function cleanUrl(url) {
-            return url.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9:/.]/g, '');
-        }
-
-        function decodeAndRedirect() {
-            const params = new URLSearchParams(window.location.search);
-            let encodedUrl = params.get("url");
-
-            if (encodedUrl) {
-                try {
-                    let decodedUrl = rot13(encodedUrl);
-                    decodedUrl = cleanUrl(decodedUrl);
-
-                    if (decodedUrl.startsWith("http://") || decodedUrl.startsWith("https://")) {
-                        window.location.href = decodedUrl;
-                    } else {
-                        document.getElementById("errorMessage").textContent = 
-                            "URL giải mã không hợp lệ: " + decodedUrl;
-                        console.error("⚠️ Lỗi: URL không hợp lệ sau khi giải mã -", decodedUrl);
-                    }
-                } catch (error) {
-                    document.getElementById("errorMessage").textContent = "Lỗi giải mã URL: " + error;
-                    console.error("❌ Lỗi giải mã URL:", error);
+        // Hàm giải mã AES-256-GCM
+        function decryptAES256GCM(encrypted, key) {
+            try {
+                // Chuyển Base64 URL-safe về Base64 chuẩn
+                const base64Encoded = encrypted.replace(/-/g, '+').replace(/_/g, '/');
+                // Thêm padding nếu cần
+                while (base64Encoded.length % 4 !== 0) {
+                    base64Encoded += '=';
                 }
-            } else {
-                document.getElementById("errorMessage").textContent = "Không tìm thấy tham số URL!";
-                console.error("⚠️ Không tìm thấy tham số URL!");
+                const buffer = Buffer.from(base64Encoded, 'base64');
+                
+                // Tách IV (12 byte), encrypted data, và authTag (16 byte)
+                const iv = buffer.subarray(0, 12);
+                const data = buffer.subarray(12, buffer.length - 16);
+                const authTag = buffer.subarray(buffer.length - 16);
+
+                // Giải mã AES-256-GCM
+                const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(key), iv);
+                decipher.setAuthTag(authTag);
+                let decrypted = decipher.update(data, null, 'utf8');
+                decrypted += decipher.final('utf8');
+                return decrypted;
+            } catch (e) {
+                console.error('Decryption failed:', e);
+                return null;
             }
         }
 
-        window.onload = decodeAndRedirect;
-    </script>
-</head>
-<body>
-    <p>Nếu không được chuyển hướng, <a id="redirectLink" href="#">bấm vào đây</a>.</p>
-    <p id="errorMessage" style="color: red;"></p>
-    <script>
-        document.getElementById("redirectLink").addEventListener("click", decodeAndRedirect);
+        // Lấy tham số URL từ query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const encryptedUrl = urlParams.get('url');
+
+        // Khóa bí mật (phải khớp với khóa dùng để mã hóa)
+        const secretKey = 'MySecretKey2025!@#$';
+
+        // Giải mã và chuyển hướng
+        if (encryptedUrl) {
+            const finalUrl = decryptAES256GCM(encryptedUrl, secretKey);
+            if (finalUrl) {
+                window.location.href = finalUrl;
+            } else {
+                document.body.innerText = 'Invalid or corrupted URL';
+            }
+        } else {
+            document.body.innerText = 'No URL parameter provided';
+        }
     </script>
 </body>
 </html>
