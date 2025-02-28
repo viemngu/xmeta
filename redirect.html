@@ -13,6 +13,7 @@
 
                 // Chuyển Base64 URL-safe về Base64 chuẩn
                 let base64Encoded = encrypted.replace(/-/g, '+').replace(/_/g, '/');
+                // Thêm padding nếu cần
                 while (base64Encoded.length % 4 !== 0) {
                     base64Encoded += '=';
                 }
@@ -24,7 +25,7 @@
                 const providedNonce = buffer.slice(0, 12);
                 const data = buffer.slice(12);
 
-                // Kiểm tra nonce (nếu cần)
+                // Kiểm tra nonce
                 if (Buffer.from(providedNonce).toString('base64') !== nonce) {
                     throw new Error('Nonce mismatch');
                 }
@@ -44,7 +45,7 @@
                 // Chuyển về chuỗi UTF-8
                 return new TextDecoder().decode(decrypted);
             } catch (e) {
-                console.error('Decryption failed:', e);
+                console.error('Decryption error:', e);
                 return null;
             }
         }
