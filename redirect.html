@@ -11,11 +11,13 @@
         function decryptAES(encrypted, key) {
             try {
                 // Chuyển Base64 URL-safe về Base64 chuẩn
-                const base64Encoded = encrypted.replace(/-/g, '+').replace(/_/g, '/');
+                let base64Encoded = encrypted.replace(/-/g, '+').replace(/_/g, '/');
                 // Thêm padding nếu cần
                 while (base64Encoded.length % 4 !== 0) {
                     base64Encoded += '=';
                 }
+
+                // Giải mã Base64 về Buffer
                 const buffer = Buffer.from(base64Encoded, 'base64');
                 
                 // Tách IV (16 byte) và encrypted data (còn lại)
@@ -33,9 +35,11 @@
                     { iv: ivHex, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
                 );
 
-                return decrypted.toString(CryptoJS.enc.Utf8);
+                const originalText = decrypted.toString(CryptoJS.enc.Utf8);
+                if (!originalText) throw new Error('Decryption failed');
+                return originalText;
             } catch (e) {
-                console.error('Decryption failed:', e);
+                console.error('Decryption error:', e);
                 return null;
             }
         }
@@ -45,7 +49,7 @@
         const encryptedUrl = urlParams.get('url');
 
         // Khóa bí mật (phải khớp với khóa dùng để mã hóa)
-        const secretKey = 'MySecretKey2025!@#$'; // Sử dụng chuỗi gốc bạn dùng để tạo khóa SHA-256
+        const secretKey = 'MySecretKey2025!@#$'; // Khớp với chuỗi gốc trong encrypt.js
 
         // Giải mã và chuyển hướng
         if (encryptedUrl) {
@@ -53,7 +57,8 @@
             if (finalUrl) {
                 window.location.href = finalUrl;
             } else {
-                document.body.innerText = 'Invalid or corrupted URL';
+                document.body.innerText = 'Invalid or corrupted URL. Check secret key or encoded URL.';
+                console.log('Encrypted URL:', encryptedUrl);
             }
         } else {
             document.body.innerText = 'No URL parameter provided';
